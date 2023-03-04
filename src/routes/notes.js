@@ -4,8 +4,9 @@ const {
   postNote,
   getNoteById,
   deleNoteById,
-  modifyNoteById
+  modifyNoteById,
 } = require("../controllers/notes");
+const handleError = require("./error/handleError");
 
 const router = Router();
 
@@ -21,6 +22,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res, next) => {
   try {
     const note = await getNoteById(req.params.id);
+    if (!note) return next(error);
     res.status(200).json(note);
   } catch (error) {
     next(error);
@@ -39,6 +41,7 @@ router.post("/", async (req, res) => {
 router.delete("/:id", async (req, res, next) => {
   try {
     const note = await deleNoteById(req.params.id);
+    if (!note) return next(error);
     res.status(204).end();
   } catch (error) {
     next(error);
@@ -48,20 +51,13 @@ router.delete("/:id", async (req, res, next) => {
 router.put("/:id", async (req, res, next) => {
   try {
     const note = await modifyNoteById(req.params.id, req.body);
+    if (!note) return next(error);
     res.status(200).json(note);
   } catch (error) {
     next(error);
   }
 });
 
-router.use((error, req, res, next) => {
-  console.error(error);
-  if (error.name === "CastError") {
-    res.status(400).json({ error: "Malformatted id" });
-  } else {
-    //el 500 es para saber que el error es nuestro
-    res.status(500).json({ error: "Something went wrong, try again" });
-  }
-});
+router.use(handleError);
 
 module.exports = router;
