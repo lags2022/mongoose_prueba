@@ -26,9 +26,9 @@ mongoose
     console.log(err);
   });
 
-
-
-
+process.on("uncaughtException", () => {
+  mongoose.connection.disconnect();
+});
 
 //definir el esquema de la base de datos
 

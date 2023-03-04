@@ -4,7 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const Notes = require("./routes/notes");
 const notFound = require("./routes/error/notFound");
-const Sentry = require('@sentry/node');
+const Sentry = require("@sentry/node");
 const Tracing = require("@sentry/tracing");
 
 // //primera solucin para conectarse
@@ -15,6 +15,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
+app.use("/images", express.static("src/images"));
 
 Sentry.init({
   dsn: "https://963108f3649c4003b32c0331aec32e93@o4504781543112704.ingest.sentry.io/4504781544292352",
