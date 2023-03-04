@@ -7,6 +7,7 @@ const {
   modifyNoteById,
 } = require("../controllers/notes");
 const handleError = require("./error/handleError");
+const Sentry = require('@sentry/node');
 
 const router = Router();
 
@@ -24,7 +25,7 @@ router.get("/:id", async (req, res, next) => {
     const note = await getNoteById(req.params.id);
     if (!note) return next(error);
     res.status(200).json(note);
-  } catch (error) {
+  } catch (next) {
     next(error);
   }
 });
@@ -58,6 +59,8 @@ router.put("/:id", async (req, res, next) => {
   }
 });
 
+// The error handler must be before any other error middleware and after all controllers
+router.use(Sentry.Handlers.errorHandler());
 router.use(handleError);
 
 module.exports = router;
