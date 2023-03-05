@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const Notes = require("./routes/notes");
 const usersRouter = require("./routes/usersRouter");
+const loginRouter = require("./routes/loginRouter");
 const notFound = require("./routes/error/notFound");
 const Sentry = require("@sentry/node");
 const Tracing = require("@sentry/tracing");
@@ -41,6 +42,7 @@ app.use(Sentry.Handlers.tracingHandler());
 
 app.use("/api/notes", Notes);
 app.use("/api/users", usersRouter);
+app.use("/api/login", loginRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
