@@ -8,7 +8,7 @@ const {
 } = require("../controllers/notes");
 const handleError = require("./error/handleError");
 const Sentry = require("@sentry/node");
-const jwt = require("jsonwebtoken");
+const userExtractor = require("./userExtractor");
 
 const router = Router();
 
@@ -31,7 +31,7 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", userExtractor, async (req, res, next) => {
   try {
     const {
       content,
@@ -40,34 +40,17 @@ router.post("/", async (req, res) => {
     } = req.body;
     // const {content, important=false, userId} = req.body; este important es el valor por defecto si no se envia nada
 
-    const autorization = req.get("authorization");
-    let token = null;
-    console.log("autorization", autorization);
-
-    if (autorization && autorization.toLowerCase().startsWith("bearer ")) {
-      token = autorization.substring(7);
-    }
-
-    console.log("token", token);
-
-    const decodedToken = jwt.verify(token, process.env.SECRET);
-
-    console.log("decodedToken", decodedToken);
-
-    if (!token || !decodedToken.id) {
-      return res.status(401).json({ error: "token missing or invalid" });
-    }
-
-    const { id: userId } = decodedToken;
+    //sacar el userId de request
+    const { userId } = req;
 
     const note = await postNote(content, important, userId);
     res.status(201).json(note);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    next(error);
   }
 });
 
-router.delete("/:id", async (req, res, next) => {
+router.delete("/:id", userExtractor, async (req, res, next) => {
   try {
     const note = await deleNoteById(req.params.id);
     if (!note) return next(error);
@@ -77,7 +60,7 @@ router.delete("/:id", async (req, res, next) => {
   }
 });
 
-router.put("/:id", async (req, res, next) => {
+router.put("/:id", userExtractor, async (req, res, next) => {
   try {
     const note = await modifyNoteById(req.params.id, req.body);
     if (!note) return next(error);

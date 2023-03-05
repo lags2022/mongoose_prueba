@@ -17,7 +17,9 @@ const validUser = async (username, password) => {
   };
 
   //creamos el token lo firmamos y lo devolvemos. no olvidar la palabra secreta que es la que se usa para firmar el token.
-  const token = jwt.sign(userForToken, process.env.SECRET);
+  const token = jwt.sign(userForToken, process.env.SECRET, {
+    expiresIn: 60 * 60 * 24 * 7,
+  });
 
   return { name: user.name, username: user.username, token };
 };
