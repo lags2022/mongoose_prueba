@@ -1,0 +1,7 @@
+PUT http://localhost:3001/api/users/6401f78caffb0b4f1c4dfa95
+Content-Type: application/json
+
+{
+  "content":"ohhhh me vengo arriba",
+  "important":true
+}

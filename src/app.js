@@ -3,6 +3,7 @@ require("./db/index_mongoose");
 const express = require("express");
 const cors = require("cors");
 const Notes = require("./routes/notes");
+const usersRouter = require("./routes/usersRouter");
 const notFound = require("./routes/error/notFound");
 const Sentry = require("@sentry/node");
 const Tracing = require("@sentry/tracing");
@@ -39,6 +40,7 @@ app.use(Sentry.Handlers.requestHandler());
 app.use(Sentry.Handlers.tracingHandler());
 
 app.use("/api/notes", Notes);
+app.use("/api/users", usersRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

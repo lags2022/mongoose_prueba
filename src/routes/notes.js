@@ -7,7 +7,7 @@ const {
   modifyNoteById,
 } = require("../controllers/notes");
 const handleError = require("./error/handleError");
-const Sentry = require('@sentry/node');
+const Sentry = require("@sentry/node");
 
 const router = Router();
 
@@ -32,10 +32,12 @@ router.get("/:id", async (req, res, next) => {
 
 router.post("/", async (req, res) => {
   try {
-    const note = await postNote(req.body);
+    const { content, important = false, userId } = req.body;
+    // const {content, important=false, userId} = req.body; este important es el valor por defecto si no se envia nada
+    const note = await postNote(content, important, userId);
     res.status(201).json(note);
   } catch (error) {
-    res.status(400).json({ message: "Something went wrong, try again" });
+    res.status(400).json({ error: error.message });
   }
 });
 

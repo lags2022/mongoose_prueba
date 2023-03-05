@@ -3,5 +3,6 @@ Content-Type: application/json
 
 {
   "content":"prueba1",
-  "important":true
+  "important":true,
+  "userId":"6403d48a737d86f4700a859b"
 }

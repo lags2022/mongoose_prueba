@@ -1,18 +1,28 @@
 // const notes = require("../data/notes");
 const Note = require("../db/models/Note");
+const User = require("../db/models/User");
 
 const getNotes = async () => {
-  const notes = await Note.find({});
+  const notes = await Note.find({}).populate("user", {
+    username: 1,
+    name: 1,
+  });
   return notes;
 };
 
-const postNote = async (note) => {
+
+const postNote = async (content, important, userId) => {
+  const user = await User.findById(userId);
+  if (!user) throw new Error("User not found");
   const newNote = new Note({
-    content: note.content,
+    content,
     date: new Date(),
-    important: note.important || false,
+    important,
+    user: user._id, //user.toJSON().id,esto se colocar porque se crea antes de setear el id en el modelo
   });
   const savedNote = await newNote.save();
+  user.notes = user.notes.concat(savedNote._id);
+  await user.save();
   return savedNote;
 };
 
@@ -37,4 +47,10 @@ const modifyNoteById = async (id, note) => {
   return newNoteMod;
 };
 
-module.exports = { getNotes, postNote, getNoteById, deleNoteById,modifyNoteById };
+module.exports = {
+  getNotes,
+  postNote,
+  getNoteById,
+  deleNoteById,
+  modifyNoteById,
+};
