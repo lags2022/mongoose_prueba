@@ -1,8 +1,8 @@
 POST http://localhost:3001/api/notes
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MDUwNWNlMDc4MmU2NjJiMGNiZjdiOCIsInVzZXJuYW1lIjoiYW5nZWwiLCJpYXQiOjE2NzgwNTEwNzh9.TNjxFcHjO90P4nA-6Mbd__2arzkeN1_F0W4-6memMT0
 
 {
-  "content":"prueba1",
-  "important":true,
-  "userId":"6403d48a737d86f4700a859b"
+  "content":"primera prueba con jwtoken",
+  "important":true
 }

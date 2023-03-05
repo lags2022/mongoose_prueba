@@ -8,6 +8,7 @@ const {
 } = require("../controllers/notes");
 const handleError = require("./error/handleError");
 const Sentry = require("@sentry/node");
+const jwt = require("jsonwebtoken");
 
 const router = Router();
 
@@ -32,8 +33,33 @@ router.get("/:id", async (req, res, next) => {
 
 router.post("/", async (req, res) => {
   try {
-    const { content, important = false, userId } = req.body;
+    const {
+      content,
+      important = false,
+      // userId //este userId ya no es necesario con esta autenticaction y authorization. porque ya se sabe que el usuario que esta creando la nota es el que esta autorizado. aparte que se obtiene el id del usuario desde el token
+    } = req.body;
     // const {content, important=false, userId} = req.body; este important es el valor por defecto si no se envia nada
+
+    const autorization = req.get("authorization");
+    let token = null;
+    console.log("autorization", autorization);
+
+    if (autorization && autorization.toLowerCase().startsWith("bearer ")) {
+      token = autorization.substring(7);
+    }
+
+    console.log("token", token);
+
+    const decodedToken = jwt.verify(token, process.env.SECRET);
+
+    console.log("decodedToken", decodedToken);
+
+    if (!token || !decodedToken.id) {
+      return res.status(401).json({ error: "token missing or invalid" });
+    }
+
+    const { id: userId } = decodedToken;
+
     const note = await postNote(content, important, userId);
     res.status(201).json(note);
   } catch (error) {

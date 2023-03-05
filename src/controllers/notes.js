@@ -10,7 +10,6 @@ const getNotes = async () => {
   return notes;
 };
 
-
 const postNote = async (content, important, userId) => {
   const user = await User.findById(userId);
   if (!user) throw new Error("User not found");
